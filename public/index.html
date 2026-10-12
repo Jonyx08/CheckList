@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lista de Tareas</title>
+    <link rel="stylesheet" href="src/style/style.css">
+  </head>
+  <body>
+    <main class="contenedor">
+      <h1>Lista de Tareas</h1>
+
+      <form id="form-tarea" novalidate>
+        <label for="titulo">Título</label>
+        <input id="titulo" type="text" placeholder="¿Qué hay que hacer?" autocomplete="off" />
+
+        <label for="descripcion">Descripción (opcional)</label>
+        <textarea id="descripcion" rows="3" placeholder="Detalles de la tarea"></textarea>
+
+        <p id="error" class="error" role="alert"></p>
+
+        <div class="fila">
+          <button id="btn-guardar" type="submit" class="btn primario">Agregar tarea</button>
+          <button id="btn-cancelar" type="button" class="btn" hidden>Cancelar</button>
+        </div>
+      </form>
+
+      <section>
+        <input id="buscar" type="search" placeholder="Buscar tareas..." aria-label="Buscar tareas" />
+        <p id="contador" class="contador"></p>
+        <div id="lista" class="lista"></div>
+      </section>
+    </main>
+
+    <script type="module" src="./dist/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #f3f5f9;
+  color: #1f2937;
+}
+.contenedor { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { margin: 0 0 16px; }
+
+form, .tarea {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+form { display: flex; flex-direction: column; gap: 6px; margin-bottom: 24px; }
+label { font-weight: 600; font-size: 0.9rem; }
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font: inherit;
+}
+input:focus, textarea:focus { outline: 2px solid #3b82f6; border-color: transparent; }
+
+.error { color: #dc2626; min-height: 1.2em; margin: 4px 0; font-size: 0.9rem; }
+.fila { display: flex; gap: 8px; }
+
+.btn {
+  padding: 8px 14px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+}
+.btn:hover { background: #f3f4f6; }
+.btn.primario { background: #2563eb; border-color: #2563eb; color: #fff; }
+.btn.primario:hover { background: #1d4ed8; }
+.btn.peligro { color: #dc2626; border-color: #fca5a5; }
+.btn.peligro:hover { background: #fef2f2; }
+
+.contador { color: #6b7280; font-size: 0.85rem; margin: 8px 0 12px; }
+.lista { display: grid; gap: 12px; }
+.tarea h3 { margin: 0 0 4px; }
+.tarea p { margin: 0 0 8px; color: #4b5563; }
+.tarea small { color: #9ca3af; display: block; margin-bottom: 10px; }
+.tarea.completada { border-left: 4px solid #22c55e; }
+.tarea.completada h3 { text-decoration: line-through; color: #6b7280; }
+.acciones { display: flex; gap: 8px; flex-wrap: wrap; }
+.vacio { text-align: center; color: #6b7280; padding: 24px 0; }
