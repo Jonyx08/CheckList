@@ -3,34 +3,238 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lista de Tareas</title>
-    <link rel="stylesheet" href="src/style/style.css">
+    <title>Gestor de Tareas MVC - Parcial 2</title>
+    <link rel="stylesheet" href="src/style/style.css" />
   </head>
   <body>
-    <main class="contenedor">
-      <h1>Lista de Tareas</h1>
+    <!-- Notificaciones flotantes con auto-cierre (Toast) -->
+    <aside id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></aside>
 
-      <form id="form-tarea" novalidate>
-        <label for="titulo">Título</label>
-        <input id="titulo" type="text" placeholder="¿Qué hay que hacer?" autocomplete="off" />
-
-        <label for="descripcion">Descripción (opcional)</label>
-        <textarea id="descripcion" rows="3" placeholder="Detalles de la tarea"></textarea>
-
-        <p id="error" class="error" role="alert"></p>
-
-        <div class="fila">
-          <button id="btn-guardar" type="submit" class="btn primario">Agregar tarea</button>
-          <button id="btn-cancelar" type="button" class="btn" hidden>Cancelar</button>
+    <!-- Modal de confirmación para eliminar -->
+    <div id="modal-confirmacion" class="modal-overlay" hidden>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+        <h3 id="modal-titulo" class="modal-titulo">¿Eliminar tarea?</h3>
+        <p id="modal-mensaje" class="modal-mensaje">Esta acción no se puede deshacer.</p>
+        <div class="modal-acciones">
+          <button id="modal-btn-cancelar" type="button" class="btn">Cancelar</button>
+          <button id="modal-btn-eliminar" type="button" class="btn btn-peligro">Sí, eliminar</button>
         </div>
-      </form>
+      </div>
+    </div>
 
-      <section>
-        <input id="buscar" type="search" placeholder="Buscar tareas..." aria-label="Buscar tareas" />
-        <p id="contador" class="contador"></p>
-        <div id="lista" class="lista"></div>
+    <main class="contenedor">
+      <!-- Encabezado con métricas rápidas -->
+      <header class="cabecera">
+        <div class="cabecera-titulos">
+          <h1>📋 Gestor de Tareas MVC</h1>
+          <p class="subtitulo">Parcial 2 · TypeScript, Arquitectura MVC, Eventos, Validaciones y Persistencia</p>
+        </div>
+
+        <section class="resumen-kpi" aria-label="Resumen rápido de tareas">
+          <div class="kpi-card">
+            <span class="kpi-valor" id="stat-total">0</span>
+            <span class="kpi-etiqueta">Total</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-valor kpi-pendientes" id="stat-pendientes">0</span>
+            <span class="kpi-etiqueta">Pendientes</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-valor kpi-completadas" id="stat-completadas">0</span>
+            <span class="kpi-etiqueta">Completadas</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-valor kpi-vencidas" id="stat-vencidas">0</span>
+            <span class="kpi-etiqueta">Vencidas</span>
+          </div>
+        </section>
+
+        <!-- Barra de Progreso General -->
+        <div class="progreso-contenedor" aria-label="Progreso general de tareas completadas">
+          <div class="progreso-meta">
+            <span>Progreso de cumplimiento</span>
+            <strong id="progreso-texto">0% completado</strong>
+          </div>
+          <div class="progreso-barra-fondo">
+            <div id="progreso-barra-relleno" class="progreso-barra-relleno" style="width: 0%;"></div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Múltiples Vistas / Pestañas (Requisito Parcial 2) -->
+      <nav class="pestanas-nav" role="tablist" aria-label="Filtro rápido por pestaña">
+        <button type="button" role="tab" class="pestana-btn activa" data-tab="todas" aria-selected="true">
+          📋 Todas
+        </button>
+        <button type="button" role="tab" class="pestana-btn" data-tab="pendientes" aria-selected="false">
+          ⏳ Pendientes
+        </button>
+        <button type="button" role="tab" class="pestana-btn" data-tab="completadas" aria-selected="false">
+          ✅ Completadas
+        </button>
+        <button type="button" role="tab" class="pestana-btn pestana-alerta" data-tab="vencidas" aria-selected="false">
+          ⚠️ Vencidas
+        </button>
+        <button type="button" role="tab" class="pestana-btn" data-tab="estadisticas" aria-selected="false">
+          📊 Estadísticas
+        </button>
+      </nav>
+
+      <!-- Vista 1: Gestión de Tareas (Formulario + Búsqueda + Filtros + Lista) -->
+      <div id="vista-tareas" class="vista-panel">
+        <!-- Formulario Crear / Editar -->
+        <section class="card-seccion">
+          <h2 id="form-titulo" class="seccion-titulo">Nueva Tarea</h2>
+
+          <form id="form-tarea" novalidate>
+            <input type="hidden" id="tarea-id" value="" />
+
+            <div class="campo-grupo">
+              <label for="titulo">
+                Título <span class="requerido">*</span>
+                <span class="campo-ayuda">(3 a 60 caracteres, sin duplicados)</span>
+              </label>
+              <input
+                id="titulo"
+                type="text"
+                placeholder="Ej. Entregar avance del parcial de programación"
+                autocomplete="off"
+                required
+                minlength="3"
+                maxlength="60"
+              />
+              <span id="error-titulo" class="campo-error" role="alert"></span>
+            </div>
+
+            <div class="campo-grupo">
+              <label for="descripcion">
+                Descripción
+                <span class="campo-ayuda">(opcional, máximo 250 caracteres)</span>
+              </label>
+              <textarea
+                id="descripcion"
+                rows="2"
+                placeholder="Detalles específicos, enlaces o notas complementarias..."
+                maxlength="250"
+              ></textarea>
+              <span id="error-descripcion" class="campo-error" role="alert"></span>
+            </div>
+
+            <div class="fila-columnas">
+              <!-- Prioridad -->
+              <div class="campo-grupo col">
+                <label for="prioridad">Prioridad <span class="requerido">*</span></label>
+                <select id="prioridad" required>
+                  <option value="baja">🟢 Baja</option>
+                  <option value="media" selected>🟡 Media</option>
+                  <option value="alta">🔴 Alta</option>
+                </select>
+              </div>
+
+              <!-- Fecha Límite -->
+              <div class="campo-grupo col">
+                <label for="fecha-limite">
+                  Fecha Límite
+                  <span class="campo-ayuda">(opcional)</span>
+                </label>
+                <input id="fecha-limite" type="date" />
+                <span id="error-fecha" class="campo-error" role="alert"></span>
+              </div>
+
+              <!-- Categoría Relacionada (Segunda Entidad) -->
+              <div class="campo-grupo col">
+                <label for="categoria">Categoría <span class="requerido">*</span></label>
+                <select id="categoria" required>
+                  <!-- Opciones renderizadas dinámicamente -->
+                </select>
+              </div>
+            </div>
+
+            <div id="error" class="error-banner" role="alert" hidden></div>
+
+            <div class="form-acciones">
+              <button id="btn-guardar" type="submit" class="btn btn-primario">
+                ➕ Agregar tarea
+              </button>
+              <button id="btn-cancelar" type="button" class="btn" hidden>
+                ✖ Cancelar edición
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Filtros, Búsqueda y Ordenamiento Combinados (Requisito Parcial 2) -->
+        <section class="card-seccion filtros-seccion" aria-label="Búsqueda y filtros">
+          <div class="busqueda-contenedor">
+            <span class="icono-busqueda" aria-hidden="true">🔍</span>
+            <input
+              id="buscar"
+              type="search"
+              placeholder="Buscar por título o descripción..."
+              aria-label="Buscar tareas por título o descripción"
+            />
+          </div>
+
+          <div class="filtros-grilla">
+            <div class="filtro-item">
+              <label for="filtro-prioridad">Prioridad:</label>
+              <select id="filtro-prioridad">
+                <option value="todas">Todas las prioridades</option>
+                <option value="alta">🔴 Alta</option>
+                <option value="media">🟡 Media</option>
+                <option value="baja">🟢 Baja</option>
+              </select>
+            </div>
+
+            <div class="filtro-item">
+              <label for="filtro-categoria">Categoría:</label>
+              <select id="filtro-categoria">
+                <option value="todas">Todas las categorías</option>
+                <!-- Opciones dinámicas -->
+              </select>
+            </div>
+
+            <div class="filtro-item">
+              <label for="orden">Ordenar por:</label>
+              <select id="orden">
+                <option value="creacion-desc">🕒 Más recientes primero</option>
+                <option value="creacion-asc">🕒 Más antiguas primero</option>
+                <option value="fecha-limite-asc">📅 Fecha límite: más próxima</option>
+                <option value="fecha-limite-desc">📅 Fecha límite: más lejana</option>
+                <option value="prioridad-desc">⚡ Mayor prioridad primero</option>
+                <option value="prioridad-asc">⚡ Menor prioridad primero</option>
+              </select>
+            </div>
+
+            <button id="btn-limpiar-filtros" type="button" class="btn btn-sm btn-outline">
+              🔄 Limpiar filtros
+            </button>
+          </div>
+        </section>
+
+        <!-- Lista de Tarjetas y Contador -->
+        <section aria-label="Listado de tareas">
+          <p id="contador" class="contador-info" aria-live="polite"></p>
+          <div id="lista" class="lista-tareas"></div>
+        </section>
+      </div>
+
+      <!-- Vista 2: Panel de Estadísticas y Métricas (Múltiples vistas) -->
+      <section id="vista-estadisticas" class="vista-panel" hidden aria-label="Panel de estadísticas detalladas">
+        <div class="card-seccion">
+          <h2 class="seccion-titulo">📊 Métricas y Resumen Ejecutivo</h2>
+          <p class="texto-secundario">Análisis en tiempo real sobre el estado de productividad de tus tareas registradas.</p>
+
+          <div id="stats-contenedor" class="dashboard-metricas">
+            <!-- Renderizado dinámico desde TareaView -->
+          </div>
+        </div>
       </section>
     </main>
+
+    <footer class="pie-pagina">
+      <p>Desarrollado con <strong>TypeScript</strong> y arquitectura <strong>MVC</strong> pura · Sin frameworks externos.</p>
+    </footer>
 
     <script type="module" src="./dist/main.js"></script>
   </body>

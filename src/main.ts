@@ -1,10 +1,16 @@
-import { TareaDTO } from "./models/Entity.js";
+import { CategoriaDTO, TareaDTO, TareaModel } from "./models/Entity.js";
 import { StorageService } from "./services/StorageService.js";
 import { TareaView } from "./views/EntityView.js";
 import { TareaController } from "./controllers/EntityController.js";
 
-const storage = new StorageService<TareaDTO>("listaTarea:tareas");
-const vista = new TareaView();
-const controlador = new TareaController(storage, vista);
+// Servicios de persistencia tipados en localStorage
+const storageTareas = new StorageService<TareaDTO>("listaTarea:tareas");
+const storageCategorias = new StorageService<CategoriaDTO>("listaTarea:categorias");
 
+// Instanciación de componentes según el patrón MVC
+const modelo = new TareaModel(storageTareas, storageCategorias);
+const vista = new TareaView();
+const controlador = new TareaController(modelo, vista);
+
+// Inicialización de la aplicación
 controlador.iniciar();

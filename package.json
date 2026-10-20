@@ -1,13 +1,14 @@
 {
   "name": "lista",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Gestor de tareas MVC en TypeScript puro con persistencia y filtros avanzados",
+  "main": "dist/main.js",
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc && node scripts/prepare-deploy.mjs"
   },
-  "keywords": [],
+  "keywords": ["typescript", "mvc", "todo-app", "localstorage"],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.33.2",
