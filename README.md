@@ -1,5 +1,9 @@
 # Gestor de Tareas MVC - Parcial 2
 
+> 🌐 **Demo en vivo desplegada en la nube (Vercel):**  
+> 🔗 **[https://lista-rosy-ten.vercel.app/](https://lista-rosy-ten.vercel.app/)**  
+> *(Acceso directo para evaluación inmediata sin necesidad de clonar o compilar en local).*
+
 Aplicación web profesional para la gestión avanzada de tareas, desarrollada con **TypeScript puro** (sin frameworks externos), implementando estrictamente el patrón de arquitectura **MVC (Modelo - Vista - Controlador)**, persistencia en `localStorage`, validaciones avanzadas, filtros combinados y sistema reactivo de eventos.
 
 ---
