@@ -38,6 +38,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -859,6 +863,12 @@ textarea {
   justify-content: center;
   padding: 16px;
   animation: fadeIn 0.15s ease;
+}
+
+.modal-overlay[hidden],
+.modal-overlay.oculto,
+.modal-overlay[style*="display: none"] {
+  display: none !important;
 }
 
 .modal-dialog {

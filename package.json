@@ -6,9 +6,15 @@
   "main": "dist/main.js",
   "scripts": {
     "dev": "tsc --watch",
-    "build": "tsc && node scripts/prepare-deploy.mjs"
+    "build": "tsc && node scripts/prepare-deploy.mjs",
+    "start": "npx serve ."
   },
-  "keywords": ["typescript", "mvc", "todo-app", "localstorage"],
+  "keywords": [
+    "typescript",
+    "mvc",
+    "todo-app",
+    "localstorage"
+  ],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.33.2",

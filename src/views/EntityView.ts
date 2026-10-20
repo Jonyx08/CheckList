@@ -614,6 +614,8 @@ export class TareaView {
   // -------------------------------------------------------------
 
   private configurarModalConfirmacion(): void {
+    this.cerrarModalConfirmacion(false);
+
     this.modalBtnCancelar.addEventListener("click", () => {
       this.cerrarModalConfirmacion(false);
     });
@@ -640,12 +642,16 @@ export class TareaView {
       this.resolverModalEliminar = resolve;
       this.modalMensaje.textContent = `¿Estás seguro de que deseas eliminar permanentemente la tarea "${tarea.titulo}"? Esta acción no se puede revertir.`;
       this.modalConfirmacion.hidden = false;
+      this.modalConfirmacion.classList.remove("oculto");
+      this.modalConfirmacion.style.display = "flex";
       this.modalBtnCancelar.focus();
     });
   }
 
   private cerrarModalConfirmacion(confirmado: boolean): void {
     this.modalConfirmacion.hidden = true;
+    this.modalConfirmacion.classList.add("oculto");
+    this.modalConfirmacion.style.display = "none";
     if (this.resolverModalEliminar) {
       this.resolverModalEliminar(confirmado);
       this.resolverModalEliminar = null;
